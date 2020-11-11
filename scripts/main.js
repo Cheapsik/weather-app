@@ -1,5 +1,10 @@
 // Inspired by https://www.youtube.com/watch?v=n4dtwWgRueI&t=26s
 
+let city = document.querySelector(".location .city");
+let date = document.querySelector(".location .date");
+let temp = document.querySelector(".temperature");
+let weather_element = document.querySelector(".weather");
+
 const api = {
   key: "3a47e485fde84ed8483e7db5ff43e168",
   baseurl: "https://api.openweathermap.org/data/2.5/",
@@ -11,10 +16,12 @@ search.addEventListener("keypress", key);
 function key(e) {
   if (e.keyCode == 13) {
     getResults(search.value);
-    console.log(search.value);
   }
 }
-
+function showMe() {
+  getResults(search.value);
+  console.log(search.value);
+}
 
 function getResults(query) {
   fetch(`${api.baseurl}weather?q=${query}&units=metric&appid=${api.key}`)
@@ -22,27 +29,19 @@ function getResults(query) {
       return weather.json();
     })
     .then(showResults);
-    if(query === undefined){
-      showResults = "Try something else";
-    }
-}
-
-function showResults(weather) {
-  console.log(weather);
 }
 function showResults(weather) {
-  console.log(weather);
-  let city = document.querySelector(".location .city");
-  city.innerText = `${weather.name}, ${weather.sys.country}`;
+  const City = (city.innerText = `${weather.name}, ${weather.sys.country}`);
+  localStorage.setItem("myCity", City, weather.sys.country);
 
   let now = new Date();
-  let date = document.querySelector(".location .date");
-  date.innerText = dateBuilder(now);
+  const Data = date.innerText = dateBuilder(now);
+  localStorage.setItem("myDate", Data);
 
-  let temp = document.querySelector(".temperature");
-  temp.innerHTML = `${weather.main.temp.toFixed(1)} °C`;
-  let weather_element = document.querySelector(".weather");
-  weather_element.innerText = weather.weather[0].main;
+  const Temperature = (temp.innerHTML = `${weather.main.temp.toFixed(1)} °C`);
+  localStorage.setItem("myTemperature", Temperature);
+  const Weather = (weather_element.innerText = weather.weather[0].main);
+  localStorage.setItem("myWeather", Weather);
 }
 
 function dateBuilder(d) {
@@ -76,3 +75,11 @@ function dateBuilder(d) {
 
   return `${day} ${date} ${month} ${year}`;
 }
+
+window.onload = function () {
+  city.innerText = localStorage.getItem("myCity");
+  temp.innerText = localStorage.getItem("myTemperature");
+  weather_element.innerText = localStorage.getItem("myWeather");
+  date.innerText = localStorage.getItem("myDate");
+  
+};
